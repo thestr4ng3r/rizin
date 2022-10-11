@@ -527,6 +527,9 @@ static const RzCmdDescArg cmd_print_gadget_move_args[6];
 static const RzCmdDescArg cmd_print_hash_cfg_args[2];
 static const RzCmdDescArg assembly_of_hex_alias_args[2];
 static const RzCmdDescArg cmd_print_magic_args[2];
+static const RzCmdDescArg cmd_print_raw_args[2];
+static const RzCmdDescArg cmd_print_raw_colors_args[2];
+static const RzCmdDescArg cmd_print_raw_string_args[2];
 static const RzCmdDescArg print_utf16le_args[2];
 static const RzCmdDescArg print_utf32le_args[2];
 static const RzCmdDescArg print_utf16be_args[2];
@@ -12308,6 +12311,81 @@ static const RzCmdDescHelp cmd_print_magic_help = {
 	.args = cmd_print_magic_args,
 };
 
+static const RzCmdDescHelp pr_help = {
+	.summary = "Print raw bytes in different representations",
+};
+static const RzCmdDescArg cmd_print_raw_args[] = {
+	{
+		.name = "len",
+		.type = RZ_CMD_ARG_TYPE_RZNUM,
+		.flags = RZ_CMD_ARG_FLAG_LAST,
+		.optional = true,
+
+	},
+	{ 0 },
+};
+static const RzCmdDescHelp cmd_print_raw_help = {
+	.summary = "Print raw bytes",
+	.args = cmd_print_raw_args,
+};
+
+static const RzCmdDescArg cmd_print_raw_colors_args[] = {
+	{
+		.name = "len",
+		.type = RZ_CMD_ARG_TYPE_RZNUM,
+		.flags = RZ_CMD_ARG_FLAG_LAST,
+		.optional = true,
+
+	},
+	{ 0 },
+};
+static const RzCmdDescHelp cmd_print_raw_colors_help = {
+	.summary = "Print bytes as colors in palette",
+	.args = cmd_print_raw_colors_args,
+};
+
+static const RzCmdDescHelp prg_help = {
+	.summary = "Print uncompressed data",
+};
+static const RzCmdDescArg cmd_print_raw_gunzip_args[] = {
+	{ 0 },
+};
+static const RzCmdDescHelp cmd_print_raw_gunzip_help = {
+	.summary = "gunzip block and print",
+	.args = cmd_print_raw_gunzip_args,
+};
+
+static const RzCmdDescArg cmd_print_raw_gunzip_verbose_args[] = {
+	{ 0 },
+};
+static const RzCmdDescHelp cmd_print_raw_gunzip_verbose_help = {
+	.summary = "Show consumed bytes and output size",
+	.args = cmd_print_raw_gunzip_verbose_args,
+};
+
+static const RzCmdDescArg cmd_print_raw_printable_args[] = {
+	{ 0 },
+};
+static const RzCmdDescHelp cmd_print_raw_printable_help = {
+	.summary = "Printable chars with real offset",
+	.args = cmd_print_raw_printable_args,
+};
+
+static const RzCmdDescArg cmd_print_raw_string_args[] = {
+	{
+		.name = "len",
+		.type = RZ_CMD_ARG_TYPE_RZNUM,
+		.flags = RZ_CMD_ARG_FLAG_LAST,
+		.optional = true,
+
+	},
+	{ 0 },
+};
+static const RzCmdDescHelp cmd_print_raw_string_help = {
+	.summary = "Print raw zero-terminated string",
+	.args = cmd_print_raw_string_args,
+};
+
 static const RzCmdDescArg print_string_c_cpp_args[] = {
 	{ 0 },
 };
@@ -18428,6 +18506,22 @@ RZ_IPI void rzshell_cmddescs_init(RzCore *core) {
 
 	RzCmdDesc *cmd_print_magic_cd = rz_cmd_desc_argv_modes_new(core->rcmd, cmd_print_cd, "pm", RZ_OUTPUT_MODE_JSON, rz_cmd_print_magic_handler, &cmd_print_magic_help);
 	rz_warn_if_fail(cmd_print_magic_cd);
+
+	RzCmdDesc *pr_cd = rz_cmd_desc_group_new(core->rcmd, cmd_print_cd, "pr", rz_cmd_print_raw_handler, &cmd_print_raw_help, &pr_help);
+	rz_warn_if_fail(pr_cd);
+	RzCmdDesc *cmd_print_raw_colors_cd = rz_cmd_desc_argv_new(core->rcmd, pr_cd, "prc", rz_cmd_print_raw_colors_handler, &cmd_print_raw_colors_help);
+	rz_warn_if_fail(cmd_print_raw_colors_cd);
+
+	RzCmdDesc *prg_cd = rz_cmd_desc_group_new(core->rcmd, pr_cd, "prg", rz_cmd_print_raw_gunzip_handler, &cmd_print_raw_gunzip_help, &prg_help);
+	rz_warn_if_fail(prg_cd);
+	RzCmdDesc *cmd_print_raw_gunzip_verbose_cd = rz_cmd_desc_argv_new(core->rcmd, prg_cd, "prgv", rz_cmd_print_raw_gunzip_verbose_handler, &cmd_print_raw_gunzip_verbose_help);
+	rz_warn_if_fail(cmd_print_raw_gunzip_verbose_cd);
+
+	RzCmdDesc *cmd_print_raw_printable_cd = rz_cmd_desc_argv_new(core->rcmd, pr_cd, "prx", rz_cmd_print_raw_printable_handler, &cmd_print_raw_printable_help);
+	rz_warn_if_fail(cmd_print_raw_printable_cd);
+
+	RzCmdDesc *cmd_print_raw_string_cd = rz_cmd_desc_argv_new(core->rcmd, pr_cd, "prz", rz_cmd_print_raw_string_handler, &cmd_print_raw_string_help);
+	rz_warn_if_fail(cmd_print_raw_string_cd);
 
 	RzCmdDesc *print_string_c_cpp_cd = rz_cmd_desc_argv_modes_new(core->rcmd, cmd_print_cd, "psc", RZ_OUTPUT_MODE_STANDARD, rz_print_string_c_cpp_handler, &print_string_c_cpp_help);
 	rz_warn_if_fail(print_string_c_cpp_cd);
