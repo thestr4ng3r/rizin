@@ -51,7 +51,7 @@ RZ_API bool rz_parse_plugin_add(RzParse *p, RZ_NONNULL RzParsePlugin *plugin) {
 		itsFine = plugin->init(p, p->user);
 	}
 	if (itsFine) {
-		RZ_PLUGIN_ADD(p->parsers, plugin, RzParsePlugin);
+		rz_list_append(p->parsers, plugin);
 	}
 	return true;
 }

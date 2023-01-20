@@ -29,7 +29,6 @@ RZ_API RzLang *rz_lang_new(void) {
 		rz_lang_free(lang);
 		return NULL;
 	}
-	lang->langs->free = (RzListFree)rz_lang_plugin_free;
 	lang->defs = rz_list_new();
 	if (!lang->defs) {
 		rz_lang_free(lang);
@@ -118,7 +117,7 @@ RZ_API bool rz_lang_plugin_add(RzLang *lang, RZ_NONNULL RzLangPlugin *plugin) {
 	if (rz_lang_get_by_name(lang, plugin->name)) {
 		return false;
 	}
-	RZ_PLUGIN_ADD(lang->langs, plugin, RzLangPlugin);
+	rz_list_append(lang->langs, plugin);
 	if (plugin->init) {
 		plugin->init(lang);
 	}
